@@ -1,11 +1,2 @@
-export default function HomePage(){
-	return (
-		<div>
-			<main>
-				<div className="grid h-screen place-items-center">
-					<h1 className="text-green-900 text-lg">About</h1>
-				</div>
-			</main>
-		</div>
-	)
-}
+import { artistName,pickup } from '@/lib/painting';
+export default function About(){return <section className="page-section about"><p className="eyebrow">THE ARTIST</p><h1>{artistName}</h1><h2>Original art.<br/><em>A personal perspective.</em></h2><p>Welcome to my collection of original paintings. This is a space to explore the work, take a closer look, and find a painting that speaks to you.</p><p>{pickup}</p></section>;}

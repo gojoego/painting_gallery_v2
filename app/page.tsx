@@ -1,11 +1,6 @@
-export default function HomePage(){
-	return (
-		<div>
-			<main>
-				<div className="grid h-screen place-items-center">
-					<h1 className="text-green-900 text-lg">Home Page</h1>
-				</div>
-			</main>
-		</div>
-	)
-}
+/* eslint-disable @next/next/no-img-element */
+import Link from 'next/link';
+import { publishedPaintings } from '@/lib/gallery';
+import { PaintingCard } from '@/components/painting-card';
+import { titleOf } from '@/lib/painting';
+export default async function HomePage(){const paintings=await publishedPaintings();const featured=paintings[0];return <><section className="hero"><div className="hero-copy"><p className="eyebrow">JANE DOE · LEWISVILLE, TEXAS</p><h1>A little color.<br/>A different<br/><em>way of seeing.</em></h1><p>Original paintings. Made by hand,<br/>to live with and make your own.</p><Link className="text-link" href="/gallery">Explore the gallery <span>↗</span></Link></div><div className="hero-art">{featured?<Link href={`/gallery/${featured.id}`}><img src={`/artwork/${featured.id}`} alt={titleOf(featured)}/><span>{titleOf(featured)} · View painting ↗</span></Link>:<div className="empty-art"><span>THE STUDIO COLLECTION</span><p>Room for<br/><em>something original.</em></p><small>New paintings will appear here.</small></div>}</div></section><section className="collection"><div className="section-heading"><div><p className="eyebrow">FROM THE STUDIO</p><h2>Selected paintings</h2></div><Link className="text-link" href="/gallery">View all paintings ↗</Link></div>{paintings.length?<div className="gallery-grid">{paintings.slice(0,3).map(p=><PaintingCard key={p.id} painting={p}/>)}</div>:<div className="empty-state"><h3>A collection in the making.</h3><p>The gallery is waiting for its first original. Please visit again soon.</p></div>}</section><section className="artist-note"><p className="eyebrow">ART, CLOSE TO HOME</p><h2>From my studio<br/><em>to your space.</em></h2><p>A personal collection of original paintings by Jane Doe.<br/>Discover each work at your own pace.</p><Link className="text-link" href="/about">Meet the artist ↗</Link></section></>;}

@@ -1,0 +1,9 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { paintingSchema,canPublish,titleOf,dimensions,priceOf,type Painting } from '../lib/painting';
+const empty={title:'',medium:'',description:'',width:'',height:'',depth:'',price:'',availability:'available',visibility:'draft'};
+test('incomplete drafts and Untitled fallback',()=>{assert.equal(paintingSchema.parse(empty).width,null);assert.equal(titleOf({title:'  '}),'Untitled');assert.equal(titleOf({title:null}),'Untitled');assert.equal(canPublish({width:null,height:null,photo_path:null}),false);});
+test('publishing requires dimensions and photo',()=>{assert.equal(canPublish({width:12,height:24,photo_path:'photo'}),true);for(const p of [{width:0,height:24,photo_path:'x'},{width:12,height:null,photo_path:'x'},{width:12,height:24,photo_path:null}])assert.equal(canPublish(p),false);});
+test('prices use exact integer cents',()=>{for(const [price,cents] of [['0.29',29],['19.99',1999],['0',0],['12.1',1210],['',null]])assert.equal(paintingSchema.parse({...empty,price}).price,cents);for(const price of ['-1','1.001','NaN','1e2'])assert.equal(paintingSchema.safeParse({...empty,price}).success,false);});
+test('reject invalid dimensions, enums, long text',()=>{for(const width of ['0','-2','Infinity','NaN','10001'])assert.equal(paintingSchema.safeParse({...empty,width}).success,false);assert.equal(paintingSchema.safeParse({...empty,availability:'reserved'}).success,false);assert.equal(paintingSchema.safeParse({...empty,title:'x'.repeat(201)}).success,false);});
+test('optional display data omitted and USD formatted',()=>{const p={width:null,height:null,depth:null,price_cents:null} as Painting;assert.equal(dimensions(p),null);assert.equal(priceOf(p),null);assert.equal(dimensions({...p,width:12,height:24,depth:1.5}),'12 × 24 × 1.5 in');assert.equal(priceOf({...p,price_cents:29}),'$0.29');});
